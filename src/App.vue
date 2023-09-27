@@ -1,9 +1,31 @@
+<script lang="ts" setup>
+import NavigationMenu from '@/components/shared/NavigationMenu.vue'
+import { useStore } from 'vuex'
+import { computed, onMounted, watch } from 'vue'
+import { LocalStorageKeys } from '@/constants/localStorageKeys'
+
+const store = useStore()
+const favoriteList = computed(() => store.getters.favoriteList)
+onMounted(() => {
+  store.dispatch('initFavoriteList')
+})
+
+watch(favoriteList, (value) => {
+  console.log('watch favorite', favoriteList.value)
+  localStorage.setItem(LocalStorageKeys.FAVORITES, JSON.stringify(value))
+}, { deep: true })
+
+</script>
+
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </nav>
-  <router-view/>
+  <div>
+    <navigation-menu/>
+    <div class="container">
+
+      <router-view/>
+    </div>
+  </div>
+
 </template>
 
 <style>
@@ -15,16 +37,8 @@
   color: #2c3e50;
 }
 
-nav {
-  padding: 30px;
-}
-
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-nav a.router-link-exact-active {
-  color: #42b983;
+.container {
+  margin: 40px auto;
+  max-width: 1300px;
 }
 </style>
